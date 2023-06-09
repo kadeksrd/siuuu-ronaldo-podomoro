@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Siuuu Ronaldo Podomoro</title>
+    <style>
+      body {
+        background-image: url("ronaldo-wallpaper.jpg");
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .box-container {
+        padding: 20px 60px;
+        background-color: rgba(119, 119, 119, 0.493);
+        border-radius: 20px;
+      }
+
+      .switch-button {
+        padding: 2rem 0;
+        display: flex;
+      }
+
+      .switch-button button {
+        background-color: transparent;
+        color: white;
+        border: 0;
+        font-size: 18px;
+        padding: 5px 15px;
+        margin-left: 1rem;
+      }
+
+      .switch-button button:active,
+      .switch-button button.active {
+        background-color: rgb(102, 102, 102);
+        border-radius: 10px;
+      }
+
+      .time-text {
+        color: white;
+        font-weight: 600;
+        padding: 2rem 0;
+        display: flex;
+        justify-content: center;
+        font-size: 80px;
+      }
+
+      .start-button {
+        padding: 2rem 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      .start-button button {
+        font-size: 35px;
+        padding: 15px 80px;
+        border-radius: 20px;
+        background-color: #fff;
+        border: 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .start-button button:hover {
+        background-color: lightgray;
+      }
+
+      .start-button button.active {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay">
+      <h1
+        style="
+          color: white;
+          text-align: center;
+          font-size: 40px;
+          padding: 30px 0px;
+        ">
+        Siuuu Ronaldo Pomodoro
+      </h1>
+      <div class="container">
+        <div class="box-container">
+          <div class="switch-button">
+            <button
+              class="start active"
+              id="startButton"
+              onclick="setActiveButton('startButton'); resetTimer();">
+              Start
+            </button>
+
+            <button
+              class="break"
+              id="shortBreakButton"
+              onclick="setActiveButton('shortBreakButton'); startShortBreak();">
+              Short Break
+            </button>
+            <button
+              class="long-break"
+              id="longBreakButton"
+              onclick="setActiveButton('longBreakButton'); startLongBreak();">
+              Long Break
+            </button>
+          </div>
+          <div class="time-text" id="timer">25:00</div>
+          <div class="start-button">
+            <button id="startStopButton" onclick="startStopTimer()">
+              Start
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="alarmSound" src="siu.mp3" preload="auto"></audio>
+
+    <script>
+      let minutes = 25;
+      let seconds = 0;
+      let intervalId;
+      let isTimerRunning = false;
+
+      function startStopTimer() {
+        if (isTimerRunning) {
+          stopTimer();
+          isTimerRunning = false;
+          document.getElementById("startStopButton").textContent = "Start";
+        } else {
+          startTimer();
+          isTimerRunning = true;
+          document.getElementById("startStopButton").textContent = "Stop";
+        }
+      }
+
+      function startTimer() {
+        intervalId = setInterval(updateTimer, 1000);
+      }
+
+      function startShortBreak() {
+        minutes = 5;
+        seconds = 0;
+        updateTimerDisplay();
+      }
+
+      function startLongBreak() {
+        minutes = 15;
+        seconds = 0;
+        updateTimerDisplay();
+      }
+
+      function stopTimer() {
+        clearInterval(intervalId);
+        resetTimer();
+        playAlarmSound();
+      }
+
+      function updateTimer() {
+        if (seconds > 0) {
+          seconds--;
+        } else if (minutes > 0) {
+          minutes--;
+          seconds = 59;
+        } else {
+          clearInterval(intervalId);
+          alert("Pomodoro Timer Selesai!");
+          isTimerRunning = false;
+          document.getElementById("startStopButton").textContent = "Start";
+          playAlarmSound();
+        }
+
+        updateTimerDisplay();
+      }
+
+      function updateTimerDisplay() {
+        let timerElement = document.getElementById("timer");
+
+        let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+        let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+        timerElement.textContent = formattedMinutes + ":" + formattedSeconds;
+      }
+
+      function resetTimer() {
+        minutes = 25;
+        seconds = 0;
+        updateTimerDisplay();
+      }
+
+      function setActiveButton(buttonId) {
+        let buttons = document.querySelectorAll(".switch-button button");
+        buttons.forEach(function (button) {
+          if (button.id === buttonId) {
+            button.classList.add("active");
+          } else {
+            button.classList.remove("active");
+          }
+        });
+      }
+
+      function playAlarmSound() {
+        let alarmSound = document.getElementById("alarmSound");
+        alarmSound.play();
+      }
+    </script>
+  </body>
+</html>
